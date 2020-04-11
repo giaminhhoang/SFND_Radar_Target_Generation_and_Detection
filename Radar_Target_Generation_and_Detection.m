@@ -33,6 +33,7 @@ c = 299792458;      % speed of light
 B = c/2/range_resolution;
 Tchirp = 5.5*2*range_max/c;
 slope = B/Tchirp;
+disp(['Slope is ', num2str(slope)]);
 
 %Operating carrier frequency of Radar 
 fc= 77e9;             %carrier freq
@@ -114,7 +115,7 @@ chirp_spec_single_1(2:end-1) = 2*chirp_spec_single_1(2:end-1);
 
 %plotting the range
 figure ('Name','Range from First FFT')
-subplot(2,1,1)
+% subplot(2,1,1)
 
  % *%TODO* :
  % plot FFT output 
@@ -180,7 +181,7 @@ Gd = 4;
 
 % *%TODO* :
 % offset the threshold by SNR value in dB
-offset_dB = 5;
+offset_dB = 10;
 
 % *%TODO* :
 %Create a vector to store noise_level for each iteration on training cells
@@ -198,31 +199,38 @@ noise_level = zeros(1,1);
 %signal under CUT with this threshold. If the CUT level > threshold assign
 %it a value of 1, else equate it to 0.
 
-n_train_cell = (2*Tr+2*Gr+1)*(2*Td+2*Gd+1) - (2*Gr+1)*(2*Gd+1);
+n_train_cells = (2*Tr+2*Gr+1)*(2*Td+2*Gd+1) - (2*Gr+1)*(2*Gd+1);
 
 
    % Use RDM[x,y] as the matrix from the output of 2D FFT for implementing
    % CFAR
    
-dimr = size(RDM,1);
-dimd = size(RDM,2);
-target_detected = zeros(dimr,dimd);
+dim_range = size(RDM,1);
+dim_dop = size(RDM,2);
+detection_map = zeros(dim_range,dim_dop);    % initialize the detection map
 
-for r = 1:dimr
-    for d = 1:dimd
+for r = 1:dim_range
+    for d = 1:dim_dop
         
-        if (r <= Tr+Gr || r >= dimr-Tr-Gr || ...
-            d <= Td+Gd || d >= dimd-Td-Gd )
-            target_detected(r,d) = 0;
+        if (r <= Tr+Gr || r >= dim_range-Tr-Gr || ... % CUT cannot be located at the edges of matrix thus set to zero
+            d <= Td+Gd || d >= dim_dop-Td-Gd )
+            detection_map(r,d) = 0;
         else
+            % compute the sum of FFT singals at training cells 
             sig_fft2_train_sum = sum(db2pow(RDM(r-Tr-Gr:r+Tr+Gr, d-Td-Gd:d+Td+Gd)),'all') -...
                 sum(db2pow(RDM(r-Gr:r+Gr, d-Gd:d+Gd)),'all');
-            sig_fft2_train_avg = sig_fft2_train_sum/n_train_cell;
+            
+            % compute the average signal over the training cell
+            sig_fft2_train_avg = sig_fft2_train_sum/n_train_cells;
+            
+            % compute the threshold in dB
             threshold = pow2db(sig_fft2_train_avg) + offset_dB;
+            
+            % detect the target
             if (RDM(r,d) >= threshold)
-                target_detected(r,d) = 1;
+                detection_map(r,d) = 1;
             else
-                target_detected(r,d) = 0;
+                detection_map(r,d) = 0;
             end
         end
     end   
@@ -247,7 +255,7 @@ end
 % *%TODO* :
 %display the CFAR output using the Surf function like we did for Range
 %Doppler Response output.
-figure,surf(doppler_axis,range_axis,target_detected);
+figure,surf(doppler_axis,range_axis,detection_map);
 colorbar;
 
 

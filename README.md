@@ -1,12 +1,13 @@
 # SFND_Radar_Target_Generation_and_Detection
 
 ```
-%Select the number of Training Cells in both the dimensions.
+%Select the number of Training Cells in both the dimensions. The number of traning cell should be large enough to estimate the noise level
 Tr = 10;
 Td = 10;
 
 %Select the number of Guard Cells in both dimensions around the Cell under 
 %test (CUT) for accurate estimation
+% These parameters are chosen based on the resolution of Range Dopler Map (RDM) whose 1 range cell has resolution of about 1 m whereas 1 dopler cell has resolution of 1.5748 m/s. 
 Gr = 4;
 Gd = 4;
 

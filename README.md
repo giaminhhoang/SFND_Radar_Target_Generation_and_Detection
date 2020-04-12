@@ -32,11 +32,11 @@ Lines 31 and 32 show the nested loop to check all the cells the 2D RDM.
 
 Lines 35 - 37 set the cells at the edge to zeros as they do have enough tranning and guard cells to apply CFAR.
 
-Lines 41 and 42 supports to calcualte the average signal value over the training cells in line 45. I need to calculate the sum of all values in the trainng cells. Here, since the sum of all training cells, guard cells and CUT and the sum of only guard cells and CUT are easily computed, I then perform the subtraction to get the sum of all trainning cells only. 
+Lines 41 and 42 support to calcualte the average signal value over the training cells in line 45. I need to calculate the sum of all values in the trainng cells. Here, since the sum of all training cells, guard cells and CUT and the sum of only guard cells and CUT are easily computed, I then perform the subtraction to get the sum of all trainning cells only. 
 
 Line 49 implements a threshold for a CUT with a predefined offset in order to mitigate false alarm. The offset is derived from the SNR. Note that as it is in dB we need to convert the averaged signal in trainning cells to dB.
 
-Finally, lines 53 - 57 implements simple detection by comaparing the value in CUT with the calculated threshold.
+Finally, lines 53 - 57 implement simple detection by comaparing the value in CUT with the calculated threshold.
 
 ```
 dim_range = size(RDM,1);

@@ -6,7 +6,7 @@ For each cell under test (CUT), the signals in the neigboring cells are averged 
 
 The number of traning cells should be large enough to estimate the noise level.
 
-The number of guard cells are chosen based on the resolution of Range Dopler Map (RDM) whose 1 range cell has resolution of about 1 m whereas 1 dopler cell has resolution of 1.5748 m/s. 
+The number of guard cells is chosen based on the resolution of Range Dopler Map (RDM) whose 1 range cell has resolution of about 1 m whereas 1 dopler cell has resolution of 1.5748 m/s. 
 
 Futhermore, an offset is also introduced to mitigate false alarm. The offset is derived from the SNR. From the Range Dopler Map (RDM), the SNR is more or less 15 dB. Therefore, 10 dB offset is chosen in order not to miss detection.
 
